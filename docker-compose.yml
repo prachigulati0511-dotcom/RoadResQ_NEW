@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: roadresq-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: roadresq_db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-roadresq_secure_pass_2026}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  roadresq-app:
+    build: .
+    container_name: roadresq-app
+    restart: always
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      PORT: 8080
+      DB_URL: jdbc:mysql://mysql-db:3306/roadresq_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-roadresq_secure_pass_2026}
+      JWT_SECRET: ${JWT_SECRET:-RoadResQSecretKeyMustBeAtLeast256BitsLongForHmacSha256Security1234567890}
+    volumes:
+      - uploaded_photos:/app/uploads
+
+volumes:
+  mysql_data:
+  uploaded_photos:

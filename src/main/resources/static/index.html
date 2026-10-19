@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoadResQ | AI-Powered Emergency Roadside Assistance Platform</title>
+
+  <!-- Typography: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet OpenStreetMap Interactive Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Lucide Modern Startup Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Master Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="brand-logo" data-navigate="home">
+        <div class="logo-radar-icon">
+          <div class="radar-ping"></div>
+          <i data-lucide="zap" style="color:#000; width:20px; height:20px; fill:#000;"></i>
+        </div>
+        <div class="brand-title">
+          <span class="main-name">RoadResQ</span>
+          <span class="sub-name" data-i18n="brandSub">AI Roadside Platform &bull; India</span>
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li><a class="nav-link active" data-navigate="home"><i data-lucide="home"></i> <span data-i18n="navHome">Home</span></a></li>
+        <li><a class="nav-link" data-navigate="assistant"><i data-lucide="sparkles"></i> <span data-i18n="navAssistant">AI Assistant</span></a></li>
+        <li><a class="nav-link" data-navigate="emergency"><i data-lucide="alert-octagon"></i> <span data-i18n="navSOS">Request SOS</span></a></li>
+        <li><a class="nav-link" data-navigate="tracking"><i data-lucide="map-pin"></i> <span data-i18n="navTracker">Live Tracker</span></a></li>
+        <li id="nav-provider-link" style="display:none;">
+          <a class="nav-link" data-navigate="provider">
+            <i data-lucide="radio"></i> <span data-i18n="navProvider">Provider Radar</span> <span class="badge-pulse" id="nav-incoming-badge">0</span>
+          </a>
+        </li>
+        <li id="nav-history-link">
+          <a class="nav-link" data-navigate="history"><i data-lucide="clock"></i> <span data-i18n="navHistory">History</span></a>
+        </li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Bilingual Language Toggle Button -->
+        <button class="btn-lang-toggle" onclick="App.toggleLanguage()" title="Switch English / हिंदी">
+          <i data-lucide="languages" style="width:16px; height:16px;"></i>
+          <span id="current-lang-label">हिंदी</span>
+        </button>
+
+        <!-- Emergency SOS Button -->
+        <button class="btn-sos" onclick="App.navigateTo('emergency')">
+          <span class="sos-pulse-ring"></span>
+          <span data-i18n="btnSOS">SOS DISPATCH</span>
+        </button>
+
+        <!-- User Profile & Quick Demo Role Switcher Chip -->
+        <div class="user-chip" id="nav-user-chip" onclick="App.openModal('demo-switcher-modal')">
+          <div class="user-avatar-badge" id="nav-user-avatar">A</div>
+          <span id="nav-user-name" style="font-weight:700;">Aarav Sharma</span>
+          <span class="role-tag role-customer" id="nav-role-tag">CUSTOMER</span>
+          <i data-lucide="chevron-down" style="width:14px; height:14px; color:var(--text-muted);"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================= MAIN SPA CONTENT ================= -->
+  <main class="main-content">
+
+    <!-- 1. LANDING PAGE VIEW -->
+    <section id="view-home" class="view-section active">
+
+      <!-- 112 National Emergency Helpline Notice Banner (India) -->
+      <div class="emergency-112-banner">
+        <div class="emergency-112-badge"><i data-lucide="phone-call" style="width:18px; height:18px;"></i> 112</div>
+        <div class="emergency-112-text">
+          <strong data-i18n="emergency112Title">National Emergency Helpline: Dial 112</strong> (Police, Ambulance, Fire)
+          <span class="emergency-112-subtext" data-i18n="emergency112Sub">RoadResQ provides mechanical vehicle breakdown and roadside recovery. Dial 112 directly if anyone is injured or there is immediate danger.</span>
+        </div>
+        <a href="tel:112" class="btn-call-112"><i data-lucide="phone" style="width:16px; height:16px;"></i> Call 112</a>
+      </div>
+
+      <div class="hero-section">
+        <div>
+          <div class="hero-tag">
+            <span class="sos-pulse-ring" style="width:8px; height:8px; background:var(--teal-neon);"></span>
+            <span data-i18n="heroTag">Next-Gen Roadside Telemetry &bull; Yamunanagar &amp; National Highways</span>
+          </div>
+          <h1 class="hero-heading" data-i18n="heroHeading">
+            Instant Road Rescue. <br />
+            <span class="text-gradient">Powered by Real-Time AI.</span>
+          </h1>
+          <p class="hero-desc" data-i18n="heroDesc">
+            Stranded in Yamunanagar, Haryana or along National Highways?
+            Our autonomous triage engine analyzes your vehicle symptoms and dispatches the nearest certified recovery unit in under 15 minutes.
+          </p>
+
+          <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <button class="btn-primary" onclick="App.navigateTo('emergency')" style="font-size:1.05rem; padding:0.9rem 1.8rem;">
+              <i data-lucide="alert-triangle"></i> <span data-i18n="btnEmergency">Dispatch Emergency Rescue</span>
+            </button>
+            <button class="btn-secondary" onclick="App.navigateTo('assistant')" style="font-size:1.05rem; padding:0.9rem 1.8rem;">
+              <i data-lucide="cpu"></i> <span data-i18n="btnAssistant">Smart Breakdown Assistant</span>
+            </button>
+          </div>
+
+          <div class="hero-stats-row">
+            <div class="hero-stat-card">
+              <span class="hero-stat-number" style="color:var(--teal-neon);">4 Fleets</span>
+              <span class="hero-stat-label" data-i18n="activeFleets">Active Fleets Online</span>
+            </div>
+            <div class="hero-stat-card">
+              <span class="hero-stat-number" style="color:var(--amber-warm);">12.4 min</span>
+              <span class="hero-stat-label" data-i18n="avgArrival">Avg Arrival Time</span>
+            </div>
+            <div class="hero-stat-card">
+              <span class="hero-stat-number" style="color:#fff;">99.8%</span>
+              <span class="hero-stat-label" data-i18n="dispatchReliability">Dispatch Reliability</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Teaser Card -->
+        <div>
+          <div class="glass-panel-glow" style="padding:2rem; background:rgba(12, 23, 38, 0.9);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <div class="logo-radar-icon" style="width:28px; height:28px;">
+                  <i data-lucide="shield" style="width:16px; height:16px; color:#000;"></i>
+                </div>
+                <span style="font-weight:800; font-size:1.1rem; color:#fff;">Live Telemetry Radar</span>
+              </div>
+              <span class="role-tag role-customer" style="background:var(--teal-dim); color:var(--teal-neon);">GPS SYNC ACTIVE</span>
+            </div>
+
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom:1.5rem;">
+              Multi-provider broadcast with First-Provider-Wins atomic locking ensures your emergency call is never locked in limbo.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:0.75rem 1rem; border-radius:8px; border:1px solid var(--border-subtle);">
+                <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem;">
+                  <i data-lucide="camera" style="color:var(--teal-neon); width:18px; height:18px;"></i>
+                  <span>Camera-Based Problem Reporting</span>
+                </div>
+                <i data-lucide="check" style="color:var(--teal-neon); width:16px; height:16px;"></i>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:0.75rem 1rem; border-radius:8px; border:1px solid var(--border-subtle);">
+                <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem;">
+                  <i data-lucide="calculator" style="color:var(--amber-warm); width:18px; height:18px;"></i>
+                  <span>Transparent Cost Estimator (₹ INR)</span>
+                </div>
+                <i data-lucide="check" style="color:var(--teal-neon); width:16px; height:16px;"></i>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:0.75rem 1rem; border-radius:8px; border:1px solid var(--border-subtle);">
+                <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem;">
+                  <i data-lucide="users" style="color:var(--turquoise-primary); width:18px; height:18px;"></i>
+                  <span>Trusted Contacts Auto-Alert</span>
+                </div>
+                <i data-lucide="check" style="color:var(--teal-neon); width:16px; height:16px;"></i>
+              </div>
+            </div>
+
+            <button class="btn-primary" onclick="App.navigateTo('emergency')" style="width:100%;">
+              <span>Start Emergency Assistance</span>
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Services Cards -->
+      <div class="section-header">
+        <div class="section-subtitle" data-i18n="servicesSub">Certified Roadside Services (India)</div>
+        <h2 class="section-title" data-i18n="servicesTitle">Emergency Rescue Fleet Capabilities</h2>
+      </div>
+
+      <div class="services-grid">
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='FLAT_TYRE'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#128734;</div>
+          <h3 class="service-card-title">Flat Tyre / Puncture Repair</h3>
+          <p class="service-card-desc">Rapid on-site puncture vulcanization, mushroom plug or spare wheel (stepney) mount for cars &amp; SUVs.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹399</span>
+          </div>
+        </div>
+
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='BATTERY_JUMP'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#9889;</div>
+          <h3 class="service-card-title">Battery Jumpstart &amp; Test</h3>
+          <p class="service-card-desc">High-output 12V/24V computerized booster packs and digital alternator charging health diagnostic.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹499</span>
+          </div>
+        </div>
+
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='TOWING'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#128666;</div>
+          <h3 class="service-card-title">Hydraulic Flatbed Towing</h3>
+          <p class="service-card-desc">Zero-clearance hydraulic flatbed carriers for safe transit to authorized brand workshop across Haryana/NCR.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹1,499</span>
+          </div>
+        </div>
+
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='FUEL_DELIVERY'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#9981;</div>
+          <h3 class="service-card-title">Emergency Fuel Delivery</h3>
+          <p class="service-card-desc">Immediate dispatch of 10L clean petrol or diesel canister directly to your highway breakdown spot.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹399</span>
+          </div>
+        </div>
+
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='EV_CHARGE'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#128267;</div>
+          <h3 class="service-card-title">Mobile EV Fast-Charge</h3>
+          <p class="service-card-desc">Emergency DC mobile charger adds 20-30 km range to reach the nearest highway charging station.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹799</span>
+          </div>
+        </div>
+
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='OVERHEATING'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#127777;</div>
+          <h3 class="service-card-title">Engine Overheating &amp; Coolant</h3>
+          <p class="service-card-desc">Cooling system pressure test, radiator hose clamping, and OEM coolant replacement on scene.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹699</span>
+          </div>
+        </div>
+
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='ACCIDENT_ASSISTANCE'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#128657;</div>
+          <h3 class="service-card-title">Accident Recovery &amp; Winching</h3>
+          <p class="service-card-desc">Heavy recovery crane and winching units for off-road ditch recovery and damaged vehicle salvage.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹2,499</span>
+          </div>
+        </div>
+
+        <div class="glass-panel service-card" onclick="Emergency.selectedService='ENGINE_BREAKDOWN'; App.navigateTo('emergency');">
+          <div class="service-icon-box">&#9881;</div>
+          <h3 class="service-card-title">Mechanical Breakdown</h3>
+          <p class="service-card-desc">On-site diagnostic scan with OBD-II scanner, belt replacement, sensor checks and starter repairs.</p>
+          <div class="service-card-footer">
+            <span data-i18n="baseService">Base Service</span>
+            <span class="service-price">₹799</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SMART BREAKDOWN ASSISTANT VIEW -->
+    <section id="view-assistant" class="view-section">
+      <div style="max-width:860px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:2.5rem;">
+          <div class="hero-tag">
+            <i data-lucide="cpu"></i>
+            <span>Interactive Diagnostic Inference Engine</span>
+          </div>
+          <h1 style="font-size:2.5rem; font-weight:800; color:#fff;">Smart Breakdown Assistant</h1>
+          <p style="color:var(--text-secondary); max-width:580px; margin:0.5rem auto 0 auto; font-size:0.95rem;">
+            Answer 4 quick symptom questions. Our AI engine will infer probable causes, evaluate hazard severity, and prepare the exact rescue dispatch.
+          </p>
+        </div>
+
+        <!-- Wizard Stepper -->
+        <div class="wizard-stepper">
+          <div class="wizard-step-item active" onclick="Assistant.goToStep(1)">
+            <div class="wizard-step-circle">1</div>
+            <span class="wizard-step-label">Sounds</span>
+          </div>
+          <div class="wizard-step-item" onclick="Assistant.goToStep(2)">
+            <div class="wizard-step-circle">2</div>
+            <span class="wizard-step-label">Visual &amp; Odor</span>
+          </div>
+          <div class="wizard-step-item" onclick="Assistant.goToStep(3)">
+            <div class="wizard-step-circle">3</div>
+            <span class="wizard-step-label">Warning Lamps</span>
+          </div>
+          <div class="wizard-step-item" onclick="Assistant.goToStep(4)">
+            <div class="wizard-step-circle">4</div>
+            <span class="wizard-step-label">Mobility</span>
+          </div>
+        </div>
+
+        <!-- Questions Wizard Container -->
+        <div id="assistant-questions-container" class="glass-panel" style="padding:2.5rem; margin-bottom:2rem;">
+          <!-- Step 1: Sound -->
+          <div id="assistant-step-1">
+            <h3 style="font-size:1.3rem; margin-bottom:0.5rem; color:#fff;">What sound is your vehicle making?</h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.5rem;">Select the acoustic symptom heard when turning the key or driving:</p>
+
+            <div class="symptom-cards-grid">
+              <div class="symptom-choice-card" data-category="sound" data-value="clicking">
+                <i data-lucide="volume-2" style="color:var(--teal-neon);"></i>
+                <div class="choice-title">Rapid Clicking / Buzzing</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Starter solenoid chatters but engine does not crank over.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="sound" data-value="grinding">
+                <i data-lucide="disc" style="color:var(--amber-warm);"></i>
+                <div class="choice-title">Loud Metal Grinding</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Harsh scraping noise from wheels, transmission, or brakes.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="sound" data-value="squeal">
+                <i data-lucide="activity" style="color:var(--turquoise-primary);"></i>
+                <div class="choice-title">High-Pitched Squeal</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Piercing belt whine from alternator or water pump.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="sound" data-value="knocking">
+                <i data-lucide="alert-circle" style="color:var(--hazard-red);"></i>
+                <div class="choice-title">Heavy Engine Knock</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Deep rhythmic metallic thumping inside engine block.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="sound" data-value="silence">
+                <i data-lucide="volume-x" style="color:var(--text-muted);"></i>
+                <div class="choice-title">Complete Silence</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Turning ignition produces zero noise; instrument cluster dark.</div>
+              </div>
+
+              <div class="symptom-choice-card selected" data-category="sound" data-value="none">
+                <i data-lucide="check" style="color:var(--teal-neon);"></i>
+                <div class="choice-title">No Abnormal Noise</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Engine sound is normal or issue is external (e.g. flat tyre).</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Visuals & Odors -->
+          <div id="assistant-step-2" style="display:none;">
+            <h3 style="font-size:1.3rem; margin-bottom:0.5rem; color:#fff;">Do you see smoke, steam, or detect odors?</h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.5rem;">Visual cues provide crucial thermal and fluid leak signals:</p>
+
+            <div class="symptom-cards-grid">
+              <div class="symptom-choice-card" data-category="visual" data-value="white_steam">
+                <span class="role-tag" style="background:var(--hazard-dim); color:var(--hazard-red); align-self:flex-start;">Critical</span>
+                <div class="choice-title">White Steam from Bonnet</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Pressurized steam billows from radiator or expansion tank.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="visual" data-value="flat_tyre">
+                <span class="role-tag" style="background:var(--amber-dim); color:var(--amber-warm); align-self:flex-start;">Urgent</span>
+                <div class="choice-title">Visible Flat Tyre / Rim Drop</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Tyre rubber is collapsed against tarmac or rim is touching.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="visual" data-value="sweet_smell">
+                <span class="role-tag" style="background:var(--amber-dim); color:var(--amber-warm); align-self:flex-start;">Warning</span>
+                <div class="choice-title">Sweet Syrup Aroma / Green Puddle</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Ethylene glycol coolant leaking beneath radiator.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="visual" data-value="fluid_leak">
+                <span class="role-tag" style="background:var(--amber-dim); color:var(--amber-warm); align-self:flex-start;">Warning</span>
+                <div class="choice-title">Dark Engine Oil Puddle</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Slick viscous black puddle forming under oil pan.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="visual" data-value="burning_rubber">
+                <span class="role-tag" style="background:var(--hazard-dim); color:var(--hazard-red); align-self:flex-start;">Hazard</span>
+                <div class="choice-title">Burning Rubber / Electrical Odor</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Acrid wire insulation smell or slipping belt friction.</div>
+              </div>
+
+              <div class="symptom-choice-card selected" data-category="visual" data-value="none">
+                <span class="role-tag role-customer" style="align-self:flex-start;">Normal</span>
+                <div class="choice-title">No Smoke or Fluid Leaks</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Clean dry pavement; no burning smell detected.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Warning Lights -->
+          <div id="assistant-step-3" style="display:none;">
+            <h3 style="font-size:1.3rem; margin-bottom:0.5rem; color:#fff;">Are any dashboard warning lights illuminated?</h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.5rem;">Instrument cluster lamps display direct OBD-II ECU telemetry:</p>
+
+            <div class="symptom-cards-grid">
+              <div class="symptom-choice-card" data-category="warningLight" data-value="temp_hot">
+                <div class="choice-title" style="color:var(--hazard-red);">&#127777; High Temperature Lamp (Red)</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Coolant temp gauge pegged in RED zone; thermal alert.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="warningLight" data-value="battery_alt">
+                <div class="choice-title" style="color:var(--amber-warm);">&#9889; Battery / Alternator Symbol</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Charging system voltage below 11.8V threshold.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="warningLight" data-value="tpms_tyre">
+                <div class="choice-title" style="color:var(--amber-warm);">&#128734; TPMS Low Tyre Pressure</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Tyre pressure sensor triggered below safety threshold.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="warningLight" data-value="oil_pressure">
+                <div class="choice-title" style="color:var(--hazard-red);">&#129656; Oil Pressure Can Symbol (Red)</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Critical low oil pressure; risk of immediate engine seizure.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="warningLight" data-value="check_engine">
+                <div class="choice-title" style="color:var(--amber-warm);">&#9881; Check Engine (Amber MIL)</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Emissions, misfire, or transmission control fault.</div>
+              </div>
+
+              <div class="symptom-choice-card selected" data-category="warningLight" data-value="none">
+                <div class="choice-title" style="color:var(--teal-neon);">&#10004; No Warning Lights Active</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Dashboard lamps extinguished normally.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Engine State & Mobility -->
+          <div id="assistant-step-4" style="display:none;">
+            <h3 style="font-size:1.3rem; margin-bottom:0.5rem; color:#fff;">What is the vehicle's current mobility status?</h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.5rem;">Can the vehicle roll, crawl, or is it immobilized on the road?</p>
+
+            <div class="symptom-cards-grid">
+              <div class="symptom-choice-card" data-category="mobility" data-value="completely_immobile">
+                <div class="choice-title" style="color:var(--hazard-red);">Completely Stranded / Immobile</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Engine dead; vehicle cannot move under its own power.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="mobility" data-value="rolling_flat">
+                <div class="choice-title" style="color:var(--amber-warm);">Tyre Deflated; Rolling Risks Rim Damage</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Engine runs, but rolling further will destroy alloy wheel.</div>
+              </div>
+
+              <div class="symptom-choice-card" data-category="mobility" data-value="unsafe_to_drive">
+                <div class="choice-title" style="color:var(--amber-warm);">Severe Shuddering / Hazardous to Merge</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Misfires or transmission slippage makes highway speed unsafe.</div>
+              </div>
+
+              <div class="symptom-choice-card selected" data-category="mobility" data-value="normal">
+                <div class="choice-title" style="color:var(--teal-neon);">Parked Safely on Shoulder / Off-Road</div>
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Vehicle safely positioned clear of active traffic lanes.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation buttons -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem; border-top:1px solid var(--border-subtle); padding-top:1.5rem;">
+            <button class="btn-secondary" id="assistant-prev-btn" onclick="Assistant.prevStep()">
+              <i data-lucide="arrow-left"></i> Previous
+            </button>
+            <button class="btn-primary" id="assistant-next-btn" onclick="Assistant.nextStep()">
+              <span>Next Question</span> <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Diagnostic Result Target Container -->
+        <div id="assistant-result-section" style="display:none;"></div>
+      </div>
+    </section>
+
+    <!-- 3. EMERGENCY SOS REQUEST VIEW -->
+    <section id="view-emergency" class="view-section">
+      <div style="max-width:1080px; margin:0 auto;">
+
+        <!-- 112 Emergency Banner -->
+        <div class="emergency-112-banner">
+          <div class="emergency-112-badge"><i data-lucide="phone-call" style="width:18px; height:18px;"></i> 112</div>
+          <div class="emergency-112-text">
+            <strong data-i18n="emergency112Title">National Emergency Helpline: Dial 112</strong> (Police, Ambulance, Fire)
+            <span class="emergency-112-subtext" data-i18n="emergency112Sub">RoadResQ provides mechanical roadside breakdown support. Dial 112 directly if anyone is injured or there is immediate danger.</span>
+          </div>
+          <a href="tel:112" class="btn-call-112"><i data-lucide="phone" style="width:16px; height:16px;"></i> Call 112</a>
+        </div>
+
+        <div style="margin-bottom:2rem;">
+          <div class="hero-tag" style="background:var(--hazard-dim); border-color:var(--hazard-red); color:var(--hazard-red);">
+            <span class="sos-pulse-ring" style="width:8px; height:8px; background:var(--hazard-red);"></span>
+            <span>Immediate Roadside Emergency Dispatch &bull; Haryana &amp; NCR</span>
+          </div>
+          <h1 style="font-size:2.4rem; font-weight:800; color:#fff;" data-i18n="emergencyHeading">Request Emergency Assistance</h1>
+          <p style="color:var(--text-secondary); font-size:0.95rem;" data-i18n="emergencyDesc">
+            Confirm your breakdown category, snap or upload a photo of the problem, and dispatch nearby response units with transparent upfront pricing in INR (₹).
+          </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1.15fr 0.85fr; gap:2rem; align-items:flex-start;">
+          <!-- Left Column: Service Details & Photo Reporting -->
+          <div class="glass-panel" style="padding:2rem;">
+            <!-- Service Category Selector -->
+            <div class="form-group">
+              <label class="form-label">Select Service Needed</label>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:0.6rem;">
+                <button type="button" class="btn-secondary service-select-btn active" data-service="FLAT_TYRE">
+                  &#128734; Flat Tyre
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="BATTERY_JUMP">
+                  &#9889; Battery Jump
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="TOWING">
+                  &#128666; Flatbed Tow
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="FUEL_DELIVERY">
+                  &#9981; Fuel Delivery
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="OVERHEATING">
+                  &#127777; Overheating
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="EV_CHARGE">
+                  &#128267; Mobile EV
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="ACCIDENT_ASSISTANCE">
+                  &#128657; Accident Help
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="ENGINE_BREAKDOWN">
+                  &#9881; Mechanical
+                </button>
+                <button type="button" class="btn-secondary service-select-btn" data-service="LOCKOUT">
+                  &#128273; Lockout
+                </button>
+              </div>
+            </div>
+
+            <!-- Severity Selector -->
+            <div class="form-group">
+              <label class="form-label">Location Urgency &amp; Road Hazard Level</label>
+              <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.6rem;">
+                <button type="button" class="btn-secondary severity-btn active" data-severity="NORMAL">
+                  Normal (Safe Shoulder)
+                </button>
+                <button type="button" class="btn-secondary severity-btn" data-severity="URGENT">
+                  Urgent (Highway Lane)
+                </button>
+                <button type="button" class="btn-secondary severity-btn" data-severity="CRITICAL_HAZARD" style="color:var(--hazard-red);">
+                  Critical Hazard (Blind Bend)
+                </button>
+              </div>
+            </div>
+
+            <!-- Vehicle Selection -->
+            <div class="form-group">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label class="form-label" style="margin-bottom:0;">Your Vehicle</label>
+                <button type="button" onclick="App.openModal('vehicle-modal')" style="background:none; border:none; color:var(--teal-neon); font-size:0.8rem; font-weight:700; cursor:pointer;">
+                  + Add New Vehicle
+                </button>
+              </div>
+              <select class="form-select" id="emergency-vehicle-select">
+                <option value="Tata Nexon EV (HR-02-AB-4567)">Tata Nexon EV - [HR-02-AB-4567] (Electric)</option>
+                <option value="Maruti Suzuki Swift (HR-02-XY-8899)">Maruti Suzuki Swift - [HR-02-XY-8899] (Petrol)</option>
+                <option value="Mahindra Scorpio-N (HR-03-MN-1122)">Mahindra Scorpio-N - [HR-03-MN-1122] (Diesel)</option>
+              </select>
+            </div>
+
+            <!-- Camera-Based Problem Reporting -->
+            <div class="form-group">
+              <label class="form-label">Camera-Based Problem Photo (Optional but Recommended)</label>
+
+              <!-- Live Camera Viewfinder Overlay -->
+              <div id="live-camera-view" style="display:none; margin-bottom:1rem;">
+                <div class="camera-preview-container">
+                  <video id="camera-feed" class="camera-video-feed" playsinline autoplay></video>
+                  <div class="camera-controls-overlay">
+                    <button type="button" class="btn-primary btn-sm" onclick="Emergency.snapPhoto()">
+                      <i data-lucide="camera"></i> Snap Photo
+                    </button>
+                    <button type="button" class="btn-secondary btn-sm" onclick="Emergency.stopLiveCamera()">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Photo Upload Box / Live Trigger -->
+              <div class="photo-uploader-box" id="photo-dropzone-prompt">
+                <div style="font-size:2rem; margin-bottom:0.5rem; color:var(--teal-neon);">&#128248;</div>
+                <div style="font-weight:700; color:#fff; font-size:0.95rem;">Capture or Upload Problem Photo</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin:0.3rem 0 1rem 0;">
+                  Let the technician inspect your radiator, flat tyre, or dashboard warning before arriving.
+                </div>
+                <div style="display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap;">
+                  <button type="button" class="btn-secondary btn-sm" onclick="Emergency.startLiveCamera()">
+                    <i data-lucide="video"></i> Open Live Camera
+                  </button>
+                  <button type="button" class="btn-secondary btn-sm" onclick="document.getElementById('problem-photo-file').click()">
+                    <i data-lucide="upload"></i> Browse Files
+                  </button>
+                </div>
+                <input type="file" id="problem-photo-file" accept="image/*" style="display:none;" />
+              </div>
+
+              <!-- Photo Preview Wrapper -->
+              <div id="photo-preview-wrapper" style="display:none; margin-top:0.75rem;"></div>
+            </div>
+
+            <!-- Problem Description Textarea -->
+            <div class="form-group">
+              <label class="form-label">Symptom Description</label>
+              <textarea class="form-control" id="emergency-problem-desc" placeholder="Describe what happened (e.g. tyre punctured on highway, coolant steam rising near radiator, engine clicking)..."></textarea>
+            </div>
+          </div>
+
+          <!-- Right Column: Location, Cost Estimator & Contacts -->
+          <div style="display:flex; flex-direction:column; gap:1.5rem;">
+            <!-- Interactive Location Picker & Mini Map -->
+            <div class="glass-panel" style="padding:1.5rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <label class="form-label" style="margin-bottom:0;">Breakdown GPS Location</label>
+                <button type="button" class="btn-secondary btn-sm" onclick="Emergency.detectLocation()" style="font-size:0.78rem;">
+                  <i data-lucide="crosshair"></i> Auto-Detect GPS
+                </button>
+              </div>
+
+              <!-- Indian City Quick Selector -->
+              <div class="city-selector-bar">
+                <button type="button" class="btn-city-chip active" data-city="Yamunanagar" onclick="Emergency.selectCity('Yamunanagar', 30.1290, 77.2674)">Yamunanagar (Default)</button>
+                <button type="button" class="btn-city-chip" data-city="Ambala" onclick="Emergency.selectCity('Ambala', 30.3782, 76.7767)">Ambala</button>
+                <button type="button" class="btn-city-chip" data-city="Karnal" onclick="Emergency.selectCity('Karnal', 29.6857, 76.9905)">Karnal</button>
+                <button type="button" class="btn-city-chip" data-city="Kurukshetra" onclick="Emergency.selectCity('Kurukshetra', 29.9695, 76.8783)">Kurukshetra</button>
+                <button type="button" class="btn-city-chip" data-city="Chandigarh" onclick="Emergency.selectCity('Chandigarh', 30.7333, 76.7794)">Chandigarh</button>
+                <button type="button" class="btn-city-chip" data-city="Delhi NCR" onclick="Emergency.selectCity('Delhi NCR', 28.6139, 77.2090)">Delhi NCR</button>
+              </div>
+
+              <input type="text" class="form-control" id="emergency-address-input" value="Model Town, Jagadhri Road, Yamunanagar, Haryana 135001, India" style="margin-bottom:0.75rem; font-size:0.88rem;" />
+
+              <div id="emergency-mini-map" style="width:100%; height:200px; border-radius:10px; border:1px solid var(--border-subtle);"></div>
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+                Drag the electric teal pin on map to fine-tune exact roadside breakdown spot in Haryana/India.
+              </div>
+            </div>
+
+            <!-- Transparent Cost Estimator Breakdown -->
+            <div id="cost-estimator-container"></div>
+
+            <!-- Trusted Emergency Contacts Alert -->
+            <div class="glass-panel" style="padding:1.5rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <div style="font-weight:700; color:#fff; font-size:0.95rem; display:flex; align-items:center; gap:0.4rem;">
+                  <i data-lucide="shield-check" style="color:var(--teal-neon);"></i> Trusted Emergency Contacts
+                </div>
+                <button type="button" onclick="App.openModal('contact-modal')" style="background:none; border:none; color:var(--teal-neon); font-size:0.78rem; font-weight:700; cursor:pointer;">
+                  + Add Contact
+                </button>
+              </div>
+
+              <div id="trusted-contacts-list" style="margin-bottom:1rem;"></div>
+
+              <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; font-size:0.82rem; color:var(--text-secondary); line-height:1.4;">
+                <input type="checkbox" id="emergency-consent-contacts" checked style="margin-top:2px; accent-color:var(--teal-neon);" />
+                <span><strong>Explicit Consent:</strong> Dispatch automated SMS and live tracking link to my trusted contacts upon confirmation.</span>
+              </label>
+            </div>
+
+            <!-- Confirm & Dispatch Button -->
+            <button class="btn-primary" onclick="Emergency.submitRequest()" style="font-size:1.1rem; padding:1.1rem; width:100%;">
+              <i data-lucide="send"></i> Confirm &amp; Dispatch Rescue Fleet
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. LIVE REQUEST TRACKING VIEW -->
+    <section id="view-tracking" class="view-section">
+      <div style="max-width:1200px; margin:0 auto;">
+        <!-- Top Tracking Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+          <div>
+            <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Live Rescue Telemetry</div>
+            <h1 style="font-size:2.2rem; font-weight:800; color:#fff;">
+              Tracking Code: <span id="tracking-code-display" style="color:var(--teal-neon);">RR-261015-4081</span>
+            </h1>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <span id="tracking-status-badge" class="role-tag role-provider" style="font-size:0.85rem; padding:6px 14px;">PENDING</span>
+            <button class="btn-secondary btn-sm" id="tracking-share-btn">
+              <i data-lucide="share-2"></i> Share Live Link
+            </button>
+            <button class="btn-secondary btn-sm" id="tracking-cancel-btn" onclick="Tracking.cancelCurrentRequest()" style="color:var(--hazard-red);">
+              <i data-lucide="x"></i> Cancel SOS
+            </button>
+          </div>
+        </div>
+
+        <!-- Timeline Progress Tracker -->
+        <div class="glass-panel" style="padding:1.5rem 2.5rem; margin-bottom:2rem;">
+          <div class="timeline-track">
+            <div class="timeline-progress-bar" id="tracking-progress-fill" style="width:25%;"></div>
+
+            <div class="timeline-node active" id="step-node-PENDING">
+              <div class="timeline-icon-circle"><i data-lucide="radio"></i></div>
+              <span style="font-size:0.8rem; font-weight:700; color:#fff;">Broadcasting</span>
+            </div>
+
+            <div class="timeline-node" id="step-node-ACCEPTED">
+              <div class="timeline-icon-circle"><i data-lucide="check"></i></div>
+              <span style="font-size:0.8rem; font-weight:700; color:#fff;">Assigned</span>
+            </div>
+
+            <div class="timeline-node" id="step-node-ON_THE_WAY">
+              <div class="timeline-icon-circle"><i data-lucide="navigation"></i></div>
+              <span style="font-size:0.8rem; font-weight:700; color:#fff;">On the Way</span>
+            </div>
+
+            <div class="timeline-node" id="step-node-ARRIVED">
+              <div class="timeline-icon-circle"><i data-lucide="map-pin"></i></div>
+              <span style="font-size:0.8rem; font-weight:700; color:#fff;">Arrived</span>
+            </div>
+
+            <div class="timeline-node" id="step-node-COMPLETED">
+              <div class="timeline-icon-circle"><i data-lucide="award"></i></div>
+              <span style="font-size:0.8rem; font-weight:700; color:#fff;">Completed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revised Quote Approval Box (Dynamically shown if submitted) -->
+        <div id="tracking-revised-quote-box" style="display:none;"></div>
+
+        <div style="display:grid; grid-template-columns: 1.3fr 0.7fr; gap:2rem; align-items:flex-start;">
+          <!-- Left: Full Interactive Leaflet Map -->
+          <div class="leaflet-map-wrapper">
+            <div class="map-telemetry-badge">
+              <span class="sos-pulse-ring" style="width:8px; height:8px; background:var(--teal-neon);"></span>
+              <span>Mode: Simulated Real-Time Route Navigation (Leaflet &amp; OpenStreetMap)</span>
+            </div>
+            <div id="tracking-live-map" style="width:100%; height:100%;"></div>
+          </div>
+
+          <!-- Right: Telemetry & Technician Card -->
+          <div style="display:flex; flex-direction:column; gap:1.5rem;">
+            <!-- ETA & Distance Counter -->
+            <div class="glass-panel" style="padding:1.5rem; display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:center;">
+              <div style="border-right:1px solid var(--border-subtle); padding-right:1rem;">
+                <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Est. Arrival Time</div>
+                <div id="tracking-eta-val" style="font-size:2rem; font-weight:800; color:var(--teal-neon); margin-top:2px;">11 min</div>
+              </div>
+              <div>
+                <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Remaining Distance</div>
+                <div id="tracking-dist-val" style="font-size:2rem; font-weight:800; color:#fff; margin-top:2px;">5.2 km</div>
+              </div>
+            </div>
+
+            <!-- Provider Card -->
+            <div id="tracking-provider-card"></div>
+
+            <!-- Problem Photo Thumbnail Box -->
+            <div id="tracking-photo-box" class="glass-panel" style="padding:1.25rem; display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. PROVIDER PORTAL & RADAR VIEW -->
+    <section id="view-provider" class="view-section">
+      <div style="max-width:1200px; margin:0 auto;">
+        <!-- Header with Online Switch -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:2rem;">
+          <div>
+            <div class="hero-tag" style="background:var(--amber-dim); border-color:var(--border-amber); color:var(--amber-warm);">
+              <i data-lucide="shield-check"></i>
+              <span>Certified Emergency Rescue Fleet Terminal</span>
+            </div>
+            <h1 style="font-size:2.4rem; font-weight:800; color:#fff;">Provider Response Radar</h1>
+            <div style="color:var(--text-secondary); font-size:0.9rem;">
+              First-Provider-Wins dispatch system. Atomic locking ensures the first unit to accept gets immediate exclusive assignment.
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:1rem; background:var(--bg-surface); padding:0.75rem 1.25rem; border-radius:var(--radius-full); border:1px solid var(--border-subtle);">
+            <span id="provider-status-label" style="font-weight:700; font-size:0.9rem; color:var(--teal-neon);">Online &amp; Active</span>
+            <label style="position:relative; display:inline-block; width:48px; height:26px; cursor:pointer;">
+              <input type="checkbox" id="provider-online-toggle" checked style="opacity:0; width:0; height:0;" />
+              <span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#1e293b; transition:.3s; border-radius:26px;" id="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Provider Metrics Row -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:2.5rem;">
+          <div class="glass-panel" style="padding:1.25rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Incoming Requests in Pool</div>
+            <div id="provider-incoming-count" style="font-size:1.8rem; font-weight:800; color:var(--amber-warm); margin-top:2px;">1</div>
+          </div>
+          <div class="glass-panel" style="padding:1.25rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Missions Completed Today</div>
+            <div id="provider-completed-count" style="font-size:1.8rem; font-weight:800; color:#fff; margin-top:2px;">1</div>
+          </div>
+          <div class="glass-panel" style="padding:1.25rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Total Payout Earnings</div>
+            <div id="provider-earnings-count" style="font-size:1.8rem; font-weight:800; color:var(--teal-neon); margin-top:2px;">₹736</div>
+          </div>
+          <div class="glass-panel" style="padding:1.25rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Customer Rating</div>
+            <div style="font-size:1.8rem; font-weight:800; color:var(--amber-warm); margin-top:2px;">4.95 ★</div>
+          </div>
+        </div>
+
+        <!-- Active Assigned Job Section (Dynamically rendered if active) -->
+        <div id="provider-active-job-section" style="display:none;"></div>
+
+        <!-- Incoming Broadcast Pool -->
+        <div class="section-header" style="margin-bottom:1rem;">
+          <div class="section-subtitle">Regional Emergency Broadcast</div>
+          <h2 style="font-size:1.6rem; font-weight:800; color:#fff;">Unassigned Emergency Calls in Vicinity</h2>
+        </div>
+
+        <div id="provider-incoming-pool" class="provider-radar-pool"></div>
+      </div>
+    </section>
+
+    <!-- 6. HISTORY & INVOICES VIEW -->
+    <section id="view-history" class="view-section">
+      <div style="max-width:960px; margin:0 auto;">
+        <div style="margin-bottom:2rem;">
+          <h1 style="font-size:2.2rem; font-weight:800; color:#fff;">Service History &amp; Invoices</h1>
+          <p style="color:var(--text-secondary); font-size:0.9rem;">
+            Review your past roadside rescue calls, itemized receipts, and leave feedback for your technicians.
+          </p>
+        </div>
+
+        <div id="customer-history-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- 1. Quick Demo Role Switcher Modal -->
+  <div class="modal-backdrop" id="demo-switcher-modal">
+    <div class="modal-dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="font-size:1.3rem; font-weight:800; color:#fff;">Quick Demo Switcher</h3>
+        <button type="button" onclick="App.closeModal('demo-switcher-modal')" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+        Switch between Customer and competing Certified Providers in 1 click to test the <strong>First-Provider-Wins concurrent assignment</strong> and real-time live tracking.
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem;">
+        <!-- Customer Option -->
+        <div class="glass-panel" style="padding:1rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="Auth.login('customer@roadresq.com', 'password123'); App.closeModal('demo-switcher-modal');">
+          <div>
+            <div style="font-weight:700; color:#fff;">Aarav Sharma (Customer)</div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">customer@roadresq.com &bull; Tata Nexon EV &amp; Maruti Swift (Yamunanagar)</div>
+          </div>
+          <span class="role-tag role-customer">CUSTOMER</span>
+        </div>
+
+        <!-- Provider 1 Option -->
+        <div class="glass-panel" style="padding:1rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="Auth.login('provider1@roadresq.com', 'password123'); App.closeModal('demo-switcher-modal');">
+          <div>
+            <div style="font-weight:700; color:#fff;">Rajesh Kumar (Haryana Roadside Assistance)</div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">provider1@roadresq.com &bull; Hydraulic Flatbed Towing (Sector 17)</div>
+          </div>
+          <span class="role-tag role-provider">PROVIDER</span>
+        </div>
+
+        <!-- Provider 2 Option -->
+        <div class="glass-panel" style="padding:1rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="Auth.login('provider2@roadresq.com', 'password123'); App.closeModal('demo-switcher-modal');">
+          <div>
+            <div style="font-weight:700; color:#fff;">Vikram Singh (Bharat Auto Rescue)</div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">provider2@roadresq.com &bull; Puncture &amp; Battery Jumpstart Van (Model Town)</div>
+          </div>
+          <span class="role-tag role-provider">PROVIDER</span>
+        </div>
+
+        <!-- Provider 3 Option -->
+        <div class="glass-panel" style="padding:1rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="Auth.login('provider3@roadresq.com', 'password123'); App.closeModal('demo-switcher-modal');">
+          <div>
+            <div style="font-weight:700; color:#fff;">Amit Verma (QuickFix Road Services)</div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">provider3@roadresq.com &bull; Mobile Mechanics &amp; Fuel Delivery (Jagadhri)</div>
+          </div>
+          <span class="role-tag role-provider">PROVIDER</span>
+        </div>
+
+        <!-- Provider 4 Option -->
+        <div class="glass-panel" style="padding:1rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="Auth.login('provider4@roadresq.com', 'password123'); App.closeModal('demo-switcher-modal');">
+          <div>
+            <div style="font-weight:700; color:#fff;">Suresh Sharma (Shree Ganesh Recovery)</div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">provider4@roadresq.com &bull; Heavy Winch &amp; Accident Recovery (NH-44)</div>
+          </div>
+          <span class="role-tag role-provider">PROVIDER</span>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:1rem;">
+        <button class="btn-secondary btn-sm" onclick="App.openModal('auth-modal'); App.closeModal('demo-switcher-modal');">
+          Sign In with Another Email
+        </button>
+        <button class="btn-secondary btn-sm" onclick="Auth.logout(); App.closeModal('demo-switcher-modal');" style="color:var(--hazard-red);">
+          Log Out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Authentication Modal (Custom Login / Register) -->
+  <div class="modal-backdrop" id="auth-modal">
+    <div class="modal-dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="font-size:1.3rem; font-weight:800; color:#fff;" id="auth-modal-title">Sign In to RoadResQ</h3>
+        <button type="button" onclick="App.closeModal('auth-modal')" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="auth-form" onsubmit="event.preventDefault(); Auth.login(document.getElementById('auth-email').value, document.getElementById('auth-password').value).then(() => App.closeModal('auth-modal'));">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="auth-email" required placeholder="user@roadresq.com" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="auth-password" required placeholder="••••••••" />
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%; margin-top:0.5rem;">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Add Vehicle Modal -->
+  <div class="modal-backdrop" id="vehicle-modal">
+    <div class="modal-dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="font-size:1.3rem; font-weight:800; color:#fff;">Add Vehicle to Profile</h3>
+        <button type="button" onclick="App.closeModal('vehicle-modal')" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="add-vehicle-form" onsubmit="event.preventDefault(); Auth.addVehicle({
+        make: document.getElementById('veh-make').value,
+        model: document.getElementById('veh-model').value,
+        year: parseInt(document.getElementById('veh-year').value),
+        licensePlate: document.getElementById('veh-plate').value,
+        vehicleType: document.getElementById('veh-type').value,
+        fuelType: document.getElementById('veh-fuel').value,
+        color: document.getElementById('veh-color').value
+      }).then(() => App.closeModal('vehicle-modal'));">
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Make</label>
+            <input type="text" class="form-control" id="veh-make" required placeholder="e.g. Tata, Mahindra, Maruti" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Model</label>
+            <input type="text" class="form-control" id="veh-model" required placeholder="e.g. Nexon EV, Swift, Scorpio" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Year</label>
+            <input type="number" class="form-control" id="veh-year" required value="2023" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">License Plate</label>
+            <input type="text" class="form-control" id="veh-plate" required placeholder="e.g. HR-02-AB-4567" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Body Type</label>
+            <select class="form-select" id="veh-type">
+              <option value="Hatchback">Hatchback</option>
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Commercial Truck">Commercial Truck</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="EV">Electric Vehicle</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fuel Type</label>
+            <select class="form-select" id="veh-fuel">
+              <option value="Petrol">Petrol</option>
+              <option value="Diesel">Diesel</option>
+              <option value="CNG">CNG</option>
+              <option value="Electric">Electric</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Color (Optional)</label>
+          <input type="text" class="form-control" id="veh-color" placeholder="e.g. Silver, Pearl White" />
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%; margin-top:0.5rem;">
+          Save Vehicle
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Add Trusted Emergency Contact Modal -->
+  <div class="modal-backdrop" id="contact-modal">
+    <div class="modal-dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="font-size:1.3rem; font-weight:800; color:#fff;">Add Trusted Emergency Contact</h3>
+        <button type="button" onclick="App.closeModal('contact-modal')" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="add-contact-form" onsubmit="event.preventDefault(); Emergency.addContact({
+        name: document.getElementById('contact-name').value,
+        phone: document.getElementById('contact-phone').value,
+        email: document.getElementById('contact-email').value,
+        relationship: document.getElementById('contact-relation').value,
+        notifyByDefault: true
+      });">
+        <div class="form-group">
+          <label class="form-label">Contact Full Name</label>
+          <input type="text" class="form-control" id="contact-name" required placeholder="e.g. Rohit Sharma" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile Phone (for SMS/WhatsApp Alerts)</label>
+          <input type="tel" class="form-control" id="contact-phone" required placeholder="+91 98765 43210" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Relationship</label>
+          <input type="text" class="form-control" id="contact-relation" required placeholder="e.g. Spouse, Parent, Brother" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email (Optional)</label>
+          <input type="email" class="form-control" id="contact-email" placeholder="contact@example.com" />
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%; margin-top:0.5rem;">
+          Save Trusted Contact
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Rating & Reviews Modal -->
+  <div class="modal-backdrop" id="review-modal">
+    <div class="modal-dialog" style="text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:0.5rem; color:var(--amber-warm);">&#11088;</div>
+      <h3 style="font-size:1.5rem; font-weight:800; color:#fff; margin-bottom:0.3rem;">Rate Your Rescue Service</h3>
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+        Your feedback updates technician reputation across our verified network.
+      </p>
+
+      <!-- 5-Star Picker -->
+      <div style="display:flex; justify-content:center; gap:0.5rem; margin-bottom:1.5rem;">
+        <span class="star-rating-item" data-star="1" style="font-size:2.2rem; cursor:pointer; color:var(--amber-warm);">&#9733;</span>
+        <span class="star-rating-item" data-star="2" style="font-size:2.2rem; cursor:pointer; color:var(--amber-warm);">&#9733;</span>
+        <span class="star-rating-item" data-star="3" style="font-size:2.2rem; cursor:pointer; color:var(--amber-warm);">&#9733;</span>
+        <span class="star-rating-item" data-star="4" style="font-size:2.2rem; cursor:pointer; color:var(--amber-warm);">&#9733;</span>
+        <span class="star-rating-item" data-star="5" style="font-size:2.2rem; cursor:pointer; color:var(--amber-warm);">&#9733;</span>
+      </div>
+
+      <!-- Compliment Tags -->
+      <div style="display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+        <button type="button" class="btn-secondary btn-sm compliment-tag" data-tag="Prompt Arrival">Prompt Arrival</button>
+        <button type="button" class="btn-secondary btn-sm compliment-tag" data-tag="Professional Mechanic">Professional Mechanic</button>
+        <button type="button" class="btn-secondary btn-sm compliment-tag" data-tag="Clean Towing">Clean Towing</button>
+        <button type="button" class="btn-secondary btn-sm compliment-tag" data-tag="Transparent Pricing">Transparent Pricing</button>
+        <button type="button" class="btn-secondary btn-sm compliment-tag" data-tag="Safe Driver">Safe Driver</button>
+      </div>
+
+      <div class="form-group" style="text-align:left;">
+        <label class="form-label">Review Comments</label>
+        <textarea class="form-control" id="review-comment-input" placeholder="Share your experience with this rescue technician..."></textarea>
+      </div>
+
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn-primary" style="flex:1;" onclick="History.submitReview()">
+          Submit Rating
+        </button>
+        <button class="btn-secondary" onclick="App.closeModal('review-modal')">
+          Skip
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Provider Revised Quote Modal -->
+  <div class="modal-backdrop" id="provider-quote-modal">
+    <div class="modal-dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="font-size:1.3rem; font-weight:800; color:#fff;">Submit Revised Quote</h3>
+        <button type="button" onclick="App.closeModal('provider-quote-modal')" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <input type="hidden" id="quote-job-id" />
+
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+        If on-site diagnostics reveal additional required parts or labor, submit an itemized revised quote. The customer must approve before extra work begins.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">New Total Amount (₹ INR)</label>
+        <input type="number" step="1" class="form-control" id="quote-new-amount" required placeholder="e.g. 1850" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Diagnostic Reason / Itemized Parts</label>
+        <textarea class="form-control" id="quote-reason-input" required placeholder="e.g. Discovered sheared valve stem requiring vulcanized high-pressure replacement and wheel rebalancing."></textarea>
+      </div>
+
+      <button type="button" class="btn-primary" style="width:100%;" onclick="Provider.submitRevisedQuote()">
+        Send Revised Quote to Customer
+      </button>
+    </div>
+  </div>
+
+  <!-- 7. Lightbox Modal for Photo Inspection -->
+  <div class="modal-backdrop" id="lightbox-modal">
+    <div style="position:relative; max-width:90vw; max-height:90vh;">
+      <button type="button" onclick="App.closeModal('lightbox-modal')" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;">&times;</button>
+      <img id="lightbox-image" src="" alt="Enlarged problem photo" style="max-width:100%; max-height:85vh; border-radius:12px; border:2px solid var(--border-teal); box-shadow:var(--shadow-teal);" />
+    </div>
+  </div>
+
+  <!-- Toast Notifications Stack -->
+  <div id="toast-container"></div>
+
+  <!-- JavaScript Modules in Dependency Order -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/assistant.js"></script>
+  <script src="js/emergency.js"></script>
+  <script src="js/tracking.js"></script>
+  <script src="js/provider.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

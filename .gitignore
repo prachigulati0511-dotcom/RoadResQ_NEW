@@ -1,0 +1,69 @@
+# =========================================================================
+# RoadResQ - Git Ignore Rules
+# =========================================================================
+
+# Build Outputs (Maven / Java)
+target/
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.class
+
+# Maven temporary files
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Local Embedded Database Files & Traces
+data/
+*.mv.db
+*.trace.db
+*.db
+
+# User Uploaded Problem Photos (Keep folder via .gitkeep)
+uploads/problems/*
+!uploads/problems/.gitkeep
+
+# Environment variables & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+*.pem
+*.key
+*.pfx
+*.p12
+
+# IDE & Editor Settings
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.code-workspace
+.classpath
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System Temporary Files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+*~
+
+# Logs and Diagnostics
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
