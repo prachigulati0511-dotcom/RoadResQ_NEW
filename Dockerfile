@@ -14,7 +14,9 @@ RUN mkdir -p uploads/problems data
 
 EXPOSE 8080
 
-ENV SPRING_PROFILES_ACTIVE=mysql
+# Default to h2 for instant zero-config cloud deployment
+ENV SPRING_PROFILES_ACTIVE=h2
 ENV PORT=8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Dynamic port expansion for Render
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
